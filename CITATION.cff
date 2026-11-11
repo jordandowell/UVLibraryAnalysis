@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: >-
+  If you use this pipeline, please cite the repository version or commit used
+  in your analysis.
+title: UVLibraryAnalysis
+type: software
+authors:
+  - family-names: Dowell
+    given-names: Jordan
+repository-code: https://github.com/jordandowell/UVLibraryAnalysis
+url: https://github.com/jordandowell/UVLibraryAnalysis
+license: MIT
+date-released: 2026-11-11

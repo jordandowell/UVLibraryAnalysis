@@ -1,0 +1,3 @@
+correction_date,previous_manifest_label,corrected_compound_label,replicate_folders,evidence,status
+2026-08-13,luteolin,naringenin,"2OHF1.D; 2OHF2.D; 2OHF3.D","All three raw spectra were nearest to the authenticated naringenin anchor rather than luteolin; collaborator confirmed reciprocal naming switch.",Applied
+2026-08-13,naringenin,luteolin,"DHP1.D; DHP2.D; DHP3.D","All three raw spectra were nearest to the authenticated luteolin anchor rather than naringenin; collaborator confirmed reciprocal naming switch.",Applied

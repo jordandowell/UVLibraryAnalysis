@@ -1,0 +1,27 @@
+# Operating-system and editor metadata
+.DS_Store
+Thumbs.db
+.Rhistory
+.RData
+.Rproj.user/
+.vscode/
+
+# Raw biological and authenticated-standard acquisitions are large and may be
+# restricted. Keep only the README files and compact validated library tables.
+data/*_Agilent/
+library/Library_Dfiles/
+
+# Generated analysis results and temporary organizer staging files
+*_RawDAD_*/
+*.organizing-*
+tmp/
+
+# Rendered documentation is reproducible from Markdown and is not authoritative
+README.html
+data/README.html
+
+# Local archives and logs
+*.zip
+*.tar
+*.tar.gz
+*.log

@@ -1,0 +1,2 @@
+"manifest_file","calibration_rows_available","quantitative_calibration_enabled","status"
+"library/standard_curve_manifest.csv",0,FALSE,"No concentration-series rows supplied; current outputs are qualitative spectral analogues and relative DAD-area summaries only."
