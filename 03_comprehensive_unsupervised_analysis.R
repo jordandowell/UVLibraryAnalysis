@@ -10,7 +10,7 @@
 ##   4. Measure method, replicate, wavelength, and cluster stability.
 ##   5. Assign Strong, Moderate, Ambiguous, or Outside library coverage support.
 ##   6. Recluster ambiguous peaks into discovery-oriented spectral families.
-##   7. Write documented CSV tables and publication-ready figures.
+##   7. Write documented CSV tables and consistently styled PDF figures.
 ##
 ## "Nearest compound" means closest library analogue, not confirmed identity.
 ## Retention time is metadata used for the final display only; it is never used
@@ -20,25 +20,24 @@
 ##   RUN_AGILENT_DAD.R supplies one representative spectrum per aligned feature
 ##   and invokes this engine once per genus and alignment policy. The engine
 ##   reads the active raw-DAD library and the validated class/chromophore
-##   dictionaries from library/. Direct execution defaults to the historical
-##   Betula table only for backward compatibility.
+##   dictionaries from library/. This stage is invoked by RUN_AGILENT_DAD.R
+##   and does not provide a separate historical input route.
 
 source("02_nonlinear_compound_similarity.R")
 
-# The runner supplies one sample CSV at a time. The text before the first
-# underscore becomes both the dataset label and its dedicated output folder.
-# Direct execution remains backward-compatible by defaulting to Betula.
-DATASET_FILE <- Sys.getenv("UV_DATASET_FILE",
-                           unset = file.path("data", "Betula_MaxAbsorbances.csv"))
-DATASET_NAME <- Sys.getenv("UV_DATASET_NAME", unset = sub(
-  "_.*$", "", tools::file_path_sans_ext(basename(DATASET_FILE))
-))
+# The production runner supplies one aligned-feature spectrum table and its
+# dataset name. Requiring both values prevents accidental execution through a
+# retired input route.
+DATASET_FILE <- Sys.getenv("UV_DATASET_FILE", unset = "")
+DATASET_NAME <- Sys.getenv("UV_DATASET_NAME", unset = "")
+if (!nzchar(DATASET_FILE) || !file.exists(DATASET_FILE)) {
+  stop("UV_DATASET_FILE must identify the aligned-feature spectrum table created by RUN_AGILENT_DAD.R.")
+}
 if (!nzchar(DATASET_NAME)) stop("Could not derive a dataset name from the CSV file.")
 DATASET_SLUG <- tolower(gsub("[^A-Za-z0-9]+", "_", DATASET_NAME))
 DATASET_DISPLAY_NAME <- gsub(
   "([a-z])([A-Z])", "\\1 \\2", gsub("[_-]+", " ", DATASET_NAME)
 )
-BETULA_FILE <- DATASET_FILE  # Legacy internal variable; retention time is metadata only.
 OUTPUT_DIR_3 <- Sys.getenv("UV_OUTPUT_DIR", unset = DATASET_NAME)
 ANALYSIS_INPUT_MODE <- Sys.getenv(
   "UV_ANALYSIS_INPUT_MODE", unset = "submitted_maximum_absorbance_table"
@@ -900,7 +899,7 @@ library_domain_calibration <- calibrate_library_domain(
 # compatibility, but they contain the aligned-feature dataset selected by the
 # raw-DAD runner. The
 # first column supplies peak identifiers; parsed retention time remains metadata.
-betula_data <- read_spectral_csv(BETULA_FILE)
+betula_data <- read_spectral_csv(DATASET_FILE)
 # The library grid remains fixed. A denser or offset sample grid is aligned in
 # raw absorbance space before normalization, smoothing, or any distance model.
 # This supports instrument exports such as 3 nm Acer data against the current
@@ -911,7 +910,7 @@ betula_grid_alignment <- harmonize_wavelength_matrix(
   betula_data[, betula_native_spec$columns, drop = FALSE],
   betula_native_spec$wavelengths,
   library_spec$wavelengths,
-  input_id = basename(BETULA_FILE)
+  input_id = basename(DATASET_FILE)
 )
 betula_raw <- betula_grid_alignment$values
 betula_spec <- list(

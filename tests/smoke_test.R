@@ -12,6 +12,7 @@ required_files <- c(
   "VALIDATE_LIBRARY.R",
   "VALIDATE_OUTPUTS.R",
   "library/Absorbance_StandardLibrary_RawDAD.csv",
+  "library/Absorbance_StandardLibrary_IdentityAnchors.csv",
   "library/compound_class_dictionary.csv",
   "library/compound_chromophore_dictionary.csv"
 )

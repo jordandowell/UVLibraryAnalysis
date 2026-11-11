@@ -10,7 +10,7 @@ library.
 | `compound_class_dictionary.csv` | One descriptive chemical class per compound. |
 | `compound_chromophore_dictionary.csv` | One fine and broad chromophore definition per compound. |
 | `Library_Dfiles/<Compound>/**/*.D/DAD1.uv` | Maintainer-only: three authenticated raw standard injections per compound; excluded from Git. |
-| `Absorbance_StandardLibrary_Test.csv` | Maintainer input: curated identity anchors and point-estimate spectra. |
+| `Absorbance_StandardLibrary_IdentityAnchors.csv` | Maintainer input: curated identity anchors and point-estimate spectra. |
 | `standard_curve_manifest.csv` | Optional concentration-series injection manifest; currently header-only and calibration is disabled. |
 
 `raw_dad_library_manifest.csv` is the authoritative raw-file inventory. Only
@@ -109,7 +109,7 @@ Review these files under `raw_dad_derived/`:
 2. Add one row per raw file to `raw_dad_library_manifest.csv` and mark the role
    `standard_replicate`.
 3. Add three curated identity-anchor/point-estimate rows to
-   `Absorbance_StandardLibrary_Test.csv` on the existing wavelength grid.
+   `Absorbance_StandardLibrary_IdentityAnchors.csv` on the existing wavelength grid.
 4. Add exactly one matching row to each dictionary. For the chromophore
    dictionary, document one dominant fine motif, one broad family, confidence
    at both levels, and a concise structural rationale. Reuse an existing group

@@ -490,7 +490,7 @@ load_library_inputs <- function() {
   )
 
   # Dictionary files are authoritative. These assignments intentionally
-  # replace any legacy class columns embedded in the spectral measurements.
+  # replace any class columns embedded in the spectral measurements.
   class_by_key <- setNames(class_dictionary$class_name, compound_keys)
   detail_by_key <- setNames(class_dictionary$class_detail, compound_keys)
   spectra$Short_Class <- unname(class_by_key[spectral_keys])

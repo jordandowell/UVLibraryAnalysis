@@ -39,7 +39,7 @@ interpretations inherited from supported analogues.
 | Document | Purpose |
 |---|---|
 | [README.md](README.md) | Installation, quick start, output order, and practical interpretation. |
-| [Manuscript Methods and reporting guide](README_RAW_DAD_MANUSCRIPT_METHODS.md) | Detailed statistical methods, terminology, thresholds, figure guidance, and a Rhododendron reporting example. |
+| [Technical methods reference](METHODS.md) | Detailed computational methods, terminology, thresholds, assumptions, and reproducibility information. |
 | [Library guide](library/README.md) | Active-library contract, chromophore curation, raw-standard rebuilding, and adding standards. |
 | [Data guide](data/README.md) | Required Agilent `.D` folder layout and wavelength-grid behavior. |
 | [Contributing guide](CONTRIBUTING.md) | Validation expectations and scientific safeguards for changes. |
@@ -206,9 +206,8 @@ evidence is inadequate for a primary model.
 | Reconciliation | Evidence-gated reassignment of a low-prevalence fragment to a recurrent aligned feature. |
 | Unresolved neighboring-feature family | Nearby, mutually exclusive features retained separately in the complete matrix and summed only for sensitivity analysis. |
 
-The full controlled vocabulary, manuscript-ready Methods, figure guidance, and
-Rhododendron reporting example are in
-[README_RAW_DAD_MANUSCRIPT_METHODS.md](README_RAW_DAD_MANUSCRIPT_METHODS.md).
+The full controlled vocabulary and computational details are documented in the
+[technical methods reference](METHODS.md).
 
 ## Validation
 
@@ -254,6 +253,3 @@ repository version or commit used in an analysis and separately cite the
 software used to decode Agilent files. The code and documentation are released
 under the [MIT License](LICENSE); library spectra and compound annotations
 should also be attributed when reused.
-
-`APPS_ModelTesting.R` is intentionally retained only to reproduce the earlier
-supervised manuscript experiments. It is not part of the production workflow.

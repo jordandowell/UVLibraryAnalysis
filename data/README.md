@@ -37,4 +37,4 @@ used to decide which library compound, class, or chromophore a feature resembles
 Only raw Agilent `.D` folders belong in `data/` for the current production
 pipeline. The retired maximum-absorbance tables and exported wavelength-by-
 retention-time landscapes are deliberately excluded so that users cannot
-accidentally select an obsolete input route.
+accidentally select an unsupported input route.

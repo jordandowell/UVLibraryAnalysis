@@ -39,7 +39,9 @@ if (!requireNamespace("ggplot2", quietly = TRUE)) {
 
 suppressPackageStartupMessages(library(ggplot2))
 
-ANCHOR_FILE <- file.path("library", "Absorbance_StandardLibrary_Test.csv")
+ANCHOR_FILE <- file.path(
+  "library", "Absorbance_StandardLibrary_IdentityAnchors.csv"
+)
 MANIFEST_FILE <- file.path("library", "raw_dad_library_manifest.csv")
 CLASS_FILE <- file.path("library", "compound_class_dictionary.csv")
 STANDARD_CURVE_FILE <- file.path("library", "standard_curve_manifest.csv")

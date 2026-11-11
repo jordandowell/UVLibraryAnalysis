@@ -1,12 +1,11 @@
 # Raw HPLC-DAD spectral alignment and library-analogue workflow
 
-## Manuscript Methods, reporting guidance, and a Rhododendron example
+## Technical methods reference
 
-This document describes the production workflow for studies in which the
-original Agilent ChemStation HPLC-DAD `.D` folders are available for every
-biological sample. It provides manuscript-ready Methods language, identifies
-the results and quality-control evidence that should be reported, and
-demonstrates the workflow with the validated Rhododendron analysis.
+This document describes the computational methods implemented by the production
+workflow when original Agilent ChemStation HPLC-DAD `.D` folders are available
+for every biological sample. It is a technical reference for understanding,
+auditing, and reproducing the implemented analysis.
 
 The workflow aligns homologous sample peaks using retention time and spectral
 shape, quantifies each aligned feature using integrated DAD response, and only
@@ -54,7 +53,7 @@ not prove compound identity.
 |---|---|---|
 | **Chromatographic profile** | The baseline-corrected root-mean-square DAD signal across wavelengths as a function of retention time. | It is the trace used for peak picking, not an individual wavelength chromatogram. |
 | **Peak detection** | One local chromatographic maximum passing the permissive profile-height and local-prominence gates in one sample. | Use “detection” when referring to a sample-level row. Avoid calling it an aligned feature or compound. |
-| **Core detection** | A detection also passing the stricter chromatographic and spectral-quality criteria required to seed alignment. | “Core” describes suitability for alignment, not chemical confidence. Preferred manuscript wording: **landmark-eligible detection**. Existing tables retain `core_detection`. |
+| **Core detection** | A detection also passing the stricter chromatographic and spectral-quality criteria required to seed alignment. | “Core” describes suitability for alignment, not chemical confidence. Preferred documentation term: **landmark-eligible detection**. Existing tables retain `core_detection`. |
 | **Retention-time landmark** | A high-confidence cross-sample peak correspondence used to estimate sample RT correction. | A landmark supports correction; it is not necessarily a final feature or library match. |
 | **Aligned feature** | A cross-sample group containing at most one detection per sample and satisfying RT-spectral alignment rules. | This is the quantitative column and preferred term for the final homologous unit. “Homologous peak” may be used descriptively, but **aligned feature** is less likely to imply proven chemical identity. |
 | **Feature representative spectrum** | Median normalized spectrum of the detections assigned to one aligned feature, with uncertainty intervals retained separately. | This is sample-derived and is distinct from a library compound representative. |
@@ -123,12 +122,12 @@ not prove compound identity.
 | **Feature-wise upper-bound matrix** | Confident abundance plus every unresolved signal that could individually belong to a feature. | Analyze one feature at a time as a sensitivity limit; never sum columns because one unresolved peak can contribute to multiple candidate upper bounds. |
 | **Integrated DAD-area response** | Background-corrected absorbance integrated across the chromatographic peak and wavelength range. | Relative quantitative response; do not call it concentration without compound-specific calibration. |
 
-### Terms retained only for compatibility
+### Machine-readable field names
 
-Some filenames and CSV columns predate this vocabulary. They remain unchanged
-so existing scripts and collaborators' analyses do not break.
+Some filenames and CSV columns use shorter internal labels. The table below
+maps those machine-readable names to the technical terms used in this guide.
 
-| Legacy output wording | Preferred manuscript wording |
+| Machine-readable wording | Preferred technical term |
 |---|---|
 | `peak` when referring to a matrix column | aligned feature |
 | `core_detection` / core peak | landmark-eligible detection |
@@ -189,12 +188,12 @@ complete only when both validators report `Collaborator-handoff validation
 passed`. Begin with `Genus_RawDAD_<Policy>/00_START_HERE.csv`, followed by
 `03_Final_Results/00_READ_FIRST/READ_FIRST_output_order.csv`.
 
-# Manuscript-ready Methods
+# Computational methods
 
-These subsections can be adapted directly for a paper. Dataset-specific details
-such as instrument model, column, mobile phases, gradient, flow rate, injection
-volume, DAD acquisition interval, and biological sampling design must be added
-from laboratory records; the computational pipeline cannot infer them.
+The following sections document the implemented calculations. Instrument model,
+column, mobile phases, gradient, flow rate, injection volume, DAD acquisition
+interval, and biological sampling design are external experimental metadata and
+cannot be inferred from these scripts.
 
 ## Analysis design and separation of alignment from annotation
 
@@ -572,203 +571,3 @@ used 1,000 wavelength-block/replicate iterations, four additional 250-iteration
 seed checks, and 250 tree-resampling iterations. Every run recorded input and
 grid audits, alignment policy, parameters, and downstream handoff. Software
 versions should be added from the environment used for the final frozen run.
-
-# Worked example: Rhododendron
-
-## Analysis choice
-
-The Rhododendron dataset contained 91 `.D` sample folders representing a genus-
-level use case with expected genuine presence-absence variation. Retained
-uniqueness was the primary alignment. Expanded rescue was a prespecified
-sensitivity analysis testing whether broader reconciliation of low-prevalence
-groups changed the quantitative feature table or chemical-support summary.
-
-The raw-standard builder admitted auxiliary peak-consensus spectra for all 23
-library compounds. During QC, files originally mapped to luteolin matched the
-authenticated naringenin anchor, while files mapped to naringenin reciprocally
-matched luteolin. Collaborator review confirmed that the two raw-standard names
-had been switched. The folder and manifest mappings were corrected before the
-final run: luteolin used DHP1-DHP3 at 8.730-8.738 min, and naringenin used
-2OHF1-2OHF3 at 9.778-9.792 min. After correction, all six replicates returned
-to their assigned authenticated anchor with rank 1. Maximum between-replicate
-spectral distance was 0.00126 for luteolin and 0.00509 for naringenin, and the
-identity-conflict audit reported no remaining conflict. The active curated library retained 100%
-leave-one-replicate-out recovery for both exact compound and descriptive class
-across 69 standard replicates. The raw-DAD candidate also achieved 100% exact-
-compound and class recovery. Its median minimum-to-second-nearest distance
-ratio was 0.00166, compared with 0.000200 for the curated point
-estimates; lower is better. The curated spectra therefore remain the active
-training rows, while the raw standard results provide extraction provenance,
-broad-peak uncertainty, and an independent QC check.
-
-## Validated computational results
-
-| Result | Retained uniqueness: primary | Expanded rescue: sensitivity |
-|---|---:|---:|
-| Input samples | 91 | 91 |
-| Detected chromatographic peaks | 2,641 | 2,641 |
-| Landmark-eligible detections | 777 | 777 |
-| Final aligned features | 134 | 132 |
-| Detections reconciled with recurrent anchors | 22 | 96 |
-| Probable split-feature merges | 4 | 2 |
-| Unresolved neighboring-feature families | 2 | 4 |
-| Features in the strict-primary matrix | 117 | 96 |
-| Strong analogue support | 28 | 27 |
-| Moderate analogue support | 31 | 30 |
-| Ambiguous spectral support | 55 | 55 |
-| Outside library coverage | 20 | 20 |
-
-Both alignments used the same peak detections and landmark-eligible detections; differences
-arose from low-prevalence reconciliation. In both, 70 samples received
-constrained affine RT correction and 21 received pairwise shift correction.
-Expanded rescue reconciled 96 detections with recurrent features, compared with 22
-under retained uniqueness, and therefore retained fewer strict features. This
-is alignment-policy sensitivity, not evidence that every additional
-reconciliation is
-biologically correct.
-
-For the primary retained-uniqueness analysis, the class-first hybrid summary
-contained 59 features labeled from a supported nearest-analogue class, 11 class
-tendencies, 16 bootstrap chromophore tendencies, 5 broad-chromophore fallbacks,
-23 ambiguous features, and 20 outside library coverage. These are annotation
-levels, not confirmed compound counts.
-
-## Example Methods paragraph
-
-> Raw Agilent HPLC-DAD files from 91 Rhododendron samples were decoded and
-> processed as wavelength-by-retention-time absorbance matrices. Absorbance was
-> checked in a binary-input preflight; unreadable files would have been
-> documented and omitted rather than zero-filled, with the run stopping if
-> more than 5% of sample folders failed. All 91 Rhododendron files passed.
-> Absorbance was
-> harmonized to the authenticated-library grid from 190 to 900 nm, corrected by
-> wavelength-specific running-median baselines, and summarized as a smoothed
-> root-mean-square chromatographic profile. Peaks required profile SNR ≥ 4 and
-> local-prominence SNR ≥ 2.5. High-quality detections meeting stricter profile,
-> prominence, and spectral-quality criteria established a retention-time
-> landmark network. Samples received pairwise shift or constrained affine
-> correction, after which peaks were grouped using complete-linkage retention-
-> time and full-spectrum criteria with at most one peak per sample in a feature.
-> Because genus-level presence-absence variation was expected, retained
-> uniqueness was used for primary alignment and expanded rescue for sensitivity
-> analysis. Median feature spectra were compared with an active library of 23
-> authenticated compounds. Curated standard spectra remained the active point
-> estimates, while raw peak-consensus spectra were retained as auxiliary
-> within-standard evidence after compound-level purity, agreement, and
-> replicate-concordance checks; failed raw sets were quarantined.
-> Similarity used a six-distance nonlinear ensemble calibrated
-> by replicate- and compound-level exclusion. Retention time was not used for
-> library annotation. Features were reported as strong or moderate spectral
-> analogues, ambiguous, or outside library coverage rather than as confirmed
-> compound identities.
-
-## Example Results paragraph
-
-> Across 91 Rhododendron samples, 2,641 chromatographic peaks passed detection,
-> including 777 high-quality landmarks. The primary retained-uniqueness
-> alignment produced 134 aligned features, of which 117 passed strict-primary
-> criteria. Twenty-two displaced detections were reconciled with recurrent
-> features, four probable split homologues were merged, and two unresolved
-> neighboring-feature families were retained for sensitivity analysis.
-> Comparison with the authenticated UV library supported 28 strong and 31
-> moderate spectral analogues; 55 features remained ambiguous and 20 fell
-> outside library coverage. Expanded rescue produced 132 features and 96 strict
-> features after rescuing 96 detections. Chemical-support totals were similar
-> (27 strong, 30 moderate, 55 ambiguous, and 20 outside coverage), indicating
-> stable broad annotation conclusions despite quantitative feature-set
-> sensitivity to low-prevalence reconciliation scope.
-
-# What should be included in a manuscript
-
-## Main Methods and Results
-
-At minimum, report the raw sample number and biological grouping; laboratory
-HPLC-DAD conditions; 4/2.5 detection and 8/4 core thresholds; retention-time
-correction limits; alignment tolerances; chosen primary alignment policy and
-rationale; handling of confident zeroes, assignment flags, and feature-wise
-upper bounds; integrated DAD response definition;
-library size and replicates; nonlinear ensemble, open-set calibration, and
-bootstrap design; exclusion of retention time from library annotation; and
-analogue rather than identity language.
-
-For the primary policy, report peak detections, landmark-eligible detections,
-aligned and strict features, reconciled detections, probable split-alignment
-pairs, unresolved neighboring-feature families, RT-correction
-types, and strong/moderate/ambiguous/outside-coverage totals. Also report how
-the alternate policy changed important biological results. Do not report only
-nearest-compound counts: every spectrum has a mathematical nearest standard,
-including spectra outside library coverage.
-
-## Recommended main figures
-
-1. `sample_by_peak_detection_matrix_strict.pdf` — principal sample-by-feature
-   occurrence view in retention-time order.
-2. `genus_hybrid_pseudochromatogram.pdf` — main chemical overview with class
-   evidence, chromophore fallback, and explicit ambiguity.
-3. Selected panels from
-   `all_aligned_feature_representative_spectra_with_uncertainty.pdf` — important
-   feature shapes, prevalence, and within-feature uncertainty.
-4. A study-specific abundance or presence-absence result derived from
-   `sample_by_peak_absorbance_strict.csv`.
-
-Class-only and chromophore-only pseudochromatograms are useful companion views
-but need not both appear in the main text when the hybrid is shown.
-
-## Recommended supplementary figures
-
-- `representative_peak_picking_profiles.pdf` and
-  `peak_picking_parameter_sensitivity.pdf` for detector behavior;
-- `retention_time_correction_audit.pdf` and
-  `sample_by_aligned_peak_map.pdf` for alignment;
-- `feature_prevalence_and_alignment_support.pdf` for recurrence and confidence;
-- reconciliation, convergence, and neighboring-feature diagnostic PDFs for
-  policy and merging decisions;
-- nested leave-one-compound validation, class-overlap, silhouette, and spectral-
-  equivalence PDFs for library limitations;
-- spectral-quality, wavelength-sensitivity, and metric-ablation figures for
-  annotation robustness.
-
-## Primary tables to archive or publish
-
-| Table | Manuscript role |
-|---|---|
-| `03_Final_Results/01_Primary_Tables/sample_by_peak_absorbance_strict.csv` | NA-free, confidently assigned sample-by-feature quantitative matrix for primary analysis. |
-| `03_Final_Results/01_Primary_Tables/sample_by_peak_assignment_uncertainty_flag_strict.csv` | Same-shaped binary companion identifying unresolved candidate cells. |
-| `03_Final_Results/03_Sensitivity_and_Review/sample_by_peak_absorbance_upper_bound_strict.csv` | Per-feature upper sensitivity limits; never sum its feature columns. |
-| `03_Final_Results/01_Primary_Tables/annotated_peak_table_with_sample_absorbance_strict.csv` | Feature annotations, alignment metadata, and sample responses together. |
-| `01_Alignment_QC/03_Feature_Alignment/aligned_feature_summary_with_library_annotations.csv` | Full feature dictionary with prevalence, alignment status, and interpretation. |
-| `01_Alignment_QC/01_Peak_Picking/sample_peak_detections_and_alignment.csv` | Detection-level audit for reproducibility and disputed alignments. |
-| `02_Library_Annotation/01_Primary_Annotations/*_comprehensive_results.csv` | Complete chemical-support evidence for every feature. |
-| `01_Alignment_QC/00_Run_Manifest/raw_dad_alignment_parameters.csv` | Exact alignment settings and run counts. |
-| `01_Alignment_QC/00_Run_Manifest/raw_agilent_input_exclusions.csv` | Unreadable/truncated raw inputs omitted from all matrices; an empty table documents a clean preflight. |
-| `02_Library_Annotation/00_Run_Manifest/analysis_parameters.csv` | Annotation thresholds, metric weights, and bootstrap settings. |
-
-Archive complete and family-summed sensitivity matrices with the strict matrix
-even if only the strict matrix enters the main biological model.
-
-## Reporting language
-
-Use “closest library spectral analogue to,” “strong/moderate analogue support,”
-“consistent with the [class] spectral neighborhood,” “chromophore tendency,”
-or “outside coverage of the current authenticated UV library.” Avoid
-“identified as” or “confirmed” based only on this workflow, and do not treat a
-relative kernel probability as a posterior probability of molecular identity.
-Definitive identification requires orthogonal evidence such as co-injection
-with an authentic standard under the same method and/or mass spectrometry.
-
-# Before freezing a manuscript analysis
-
-1. Validate and archive the library inputs and dictionaries.
-2. Confirm the sample manifest and laboratory HPLC-DAD conditions.
-3. Choose and justify the primary alignment policy before biological modeling.
-4. Run the alternate policy and quantify sensitivity of major conclusions.
-5. Inspect every sample in the peak-profile atlas.
-6. Review provisional fragments, unresolved families, rare features, and
-   co-elution flags before naming important features.
-7. Use the strict matrix for the main model and complete/family-summed matrices
-   for sensitivity analyses.
-8. Record software versions and checksums from the final frozen run.
-9. Report analogue support and library coverage, not only nearest standards.
-10. Archive the raw-standard admission decisions, extraction atlas, active
-    library fingerprint, and leave-one-replicate-out validation summary with
-    the final sample outputs.

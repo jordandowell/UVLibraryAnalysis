@@ -152,18 +152,6 @@ for (source_dataset in datasets) {
   raw_dir <- file.path("data", paste0(source_dataset, "_Agilent"))
   if (!dir.exists(raw_dir)) stop("Raw Agilent folder not found: ", raw_dir)
 
-  legacy_folders <- c(
-    paste0(source_dataset, "_RawDAD_Alignment"),
-    paste0(source_dataset, "_RawDAD")
-  )
-  if (any(dir.exists(legacy_folders))) {
-    message(
-      "Legacy unsuffixed raw-DAD outputs were found and will be ignored: ",
-      paste(legacy_folders[dir.exists(legacy_folders)], collapse = ", "),
-      ". Only the policy-qualified folders created by this run are current."
-    )
-  }
-
   sample_directories <- list.dirs(raw_dir, recursive = FALSE, full.names = TRUE)
   sample_directories <- sample_directories[grepl(
     "[.]D$", sample_directories, ignore.case = TRUE
@@ -241,20 +229,6 @@ for (source_dataset in datasets) {
     file.path(annotation_dir, "00_FOLDER_GUIDE.csv"),
     file.path(final_dir, "00_FOLDER_GUIDE.csv")
   ), "run guides")
-
-  # Earlier development versions wrote three unannotated pseudochromatograms
-  # and a duplicate matrix alias into the alignment-QC folder. They are not
-  # part of the current handoff: the annotated versions live in Final Results,
-  # and the strict-primary matrix has one authoritative filename. Removing
-  # only these explicitly named files prevents stale outputs from confusing a
-  # collaborator when an existing policy folder is rerun.
-  obsolete_alignment_outputs <- file.path(alignment_dir, c(
-    "sample_by_aligned_feature_integrated_dad_area_conservative.csv",
-    "genus_prevalence_pseudochromatogram.pdf",
-    "genus_abundance_pseudochromatogram.pdf",
-    "genus_abundance_pseudochromatogram_signal_composition_mirror.pdf"
-  ))
-  remove_existing_output(obsolete_alignment_outputs, "obsolete outputs")
 
   source_slug <- tolower(gsub("[^A-Za-z0-9]+", "_", source_dataset))
   reference_file <- file.path(
